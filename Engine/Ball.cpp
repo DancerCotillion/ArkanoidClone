@@ -67,3 +67,8 @@ Vec2 Ball::GetVelocity()
 {
 	return Vel;
 }
+
+Vec2 Ball::GetPos()
+{
+	return Pos;
+}

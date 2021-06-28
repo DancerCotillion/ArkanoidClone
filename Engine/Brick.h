@@ -9,7 +9,8 @@ class Brick
 public: 
 	Brick() = default; 
 	Brick(Rectf& rect_in, Color c_in);
-	void Draw(Graphics& gfx);
+	void Draw(Graphics& gfx) const;
+	bool CheckBallCollision(const Ball& ball) const; 
 	bool doCollision(Ball& ball); 
 
 private:

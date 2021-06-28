@@ -27,9 +27,14 @@ bool Rectf::isOverlapping(const Rectf& other) const
 		&& bottom > other.top && top < other.bottom;
 }
 
-Rectf Rectf::GetExpanded(float offset)
+Rectf Rectf::GetExpanded(float offset) const
 {
 	return Rectf(left - offset, right + offset, top - offset, bottom + offset);
+}
+
+Vec2 Rectf::GetCentre() const
+{
+	return Vec2( (left + right) / 2.0f, (top + bottom) /2.0f);
 }
 
 Rectf Rectf::FromCentre(const Vec2& centre, float halfWidth, float halfHeight)

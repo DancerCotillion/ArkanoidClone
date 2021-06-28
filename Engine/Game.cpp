@@ -67,7 +67,7 @@ void Game::UpdateModel()
 		WallBounce.Play(); 
 	}
 
-	for (Brick& b : bricks)
+	for(Brick& b : bricks)
 	{
 		if (b.doCollision(ball))
 		{
@@ -86,7 +86,7 @@ void Game::ComposeFrame()
 	ball.Draw(gfx);
 	paddle.Draw(gfx);
 
-	for (Brick& b : bricks)
+	for (const Brick& b : bricks)
 	{
 		b.Draw(gfx); 
 	}

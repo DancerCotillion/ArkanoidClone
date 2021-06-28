@@ -16,8 +16,8 @@ public:
 	void ReboundY(); 
 
 	Rectf GetRect();
-
 	Vec2 GetVelocity();
+	Vec2 GetPos();
 
 private:
 	Vec2 Pos;
