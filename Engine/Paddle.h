@@ -20,14 +20,22 @@ public:
 	void ResetCoolDown(); 
 
 private:
-	Color c = Colors::White;
-	Vec2 pos;
-	static constexpr float wingWidth = 15;
+	static constexpr Color c = Colors::White;
 	static constexpr Color wingColor = Colors::Red;
+	static constexpr float wingWidth = 15;	
+	static constexpr float speed = 300.0f;
+
+	static constexpr float maximumExitRatio = 2.6f;
+	static constexpr float fixedZoneWidthRatio = 0.2f;
+
 	float halfWidth; 
 	float halfHeight;
-	float speed = 300.0f; 
-	float exitXFactor = 0.045f;
-	float fixedZoneHalfWidth = 15.0f; 
+
+	float exitXFactor;
+	float fixedZoneHalfWidth; 
+	float fixedZoneExitX;
+
 	bool isCoolDown = false;
+	
+	Vec2 pos;
 };
