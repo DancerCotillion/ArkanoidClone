@@ -27,5 +27,7 @@ private:
 	float halfWidth; 
 	float halfHeight;
 	float speed = 300.0f; 
+	float exitXFactor = 0.045f;
+	float fixedZoneHalfWidth = 15.0f; 
 	bool isCoolDown = false;
 };

@@ -25,7 +25,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	ball(Vec2(400.0f, 300.0f), Vec2(200.0f, 200.0f)),
+	ball(Vec2(400.0f, 300.0f), Vec2(-1.0f, -1.0f)),
 	walls(0.0f, float(gfx.ScreenWidth), 0.0f, float(gfx.ScreenHeight)),
 	paddle( Vec2(400.0f, 500.0f), 50.0f, 15.0f),
 	WallBounce (L"Sounds\\arkpad.wav"),
@@ -62,60 +62,73 @@ void Game::Go()
 
 void Game::UpdateModel(float dt)
 {
-	ball.update(dt);
-	paddle.Update(wnd.kbd, dt);
-
-	paddle.doWallCollision(walls);
-
-	if (paddle.doBallCollision(ball))
+	if (!gameIsOver)
 	{
-		WallBounce.Play(); 
-	}
+		ball.update(dt);
+		paddle.Update(wnd.kbd, dt);
 
-	bool collisionHappened = false;
-	float curColDistSq;
-	int curColIndex;
+		paddle.doWallCollision(walls);
 
-	for(int i = 0; i < nBricks; ++i)
-	{
-		if (bricks[i].CheckBallCollision(ball))
+		if (paddle.doBallCollision(ball))
 		{
-			const float newColDistSq = (ball.GetPos() - bricks[i].GetCentre()).GetLengthSq();
-			if (collisionHappened)
+			WallBounce.Play();
+		}
+
+		bool collisionHappened = false;
+		float curColDistSq;
+		int curColIndex;
+
+		for (int i = 0; i < nBricks; ++i)
+		{
+			if (bricks[i].CheckBallCollision(ball))
 			{
-				if (newColDistSq < curColDistSq)
+				const float newColDistSq = (ball.GetPos() - bricks[i].GetCentre()).GetLengthSq();
+				if (collisionHappened)
+				{
+					if (newColDistSq < curColDistSq)
+					{
+						curColDistSq = newColDistSq;
+						curColIndex = i;
+					}
+				}
+				else
 				{
 					curColDistSq = newColDistSq;
-					curColIndex = i; 
+					curColIndex = i;
+					collisionHappened = true;
 				}
 			}
-			else
-			{
-				curColDistSq = newColDistSq;
-				curColIndex = i;
-				collisionHappened = true; 
-			}
 		}
-	}
 
-	if (collisionHappened)
-	{
-		paddle.ResetCoolDown(); 
-		bricks[curColIndex].doCollision(ball);
-		BrickBounce.Play(); 
-	}
-	if (ball.doWallCollision(walls))
-	{
-		paddle.ResetCoolDown();
-		WallBounce.Play(); 
+		if (collisionHappened)
+		{
+			paddle.ResetCoolDown();
+			bricks[curColIndex].doCollision(ball);
+			BrickBounce.Play();
+		}
+
+		int wallCollisionTest = ball.doWallCollision(walls); 
+
+		if (wallCollisionTest == 1)
+		{
+			paddle.ResetCoolDown();
+			WallBounce.Play();
+		}
+		else if (wallCollisionTest == 2)
+		{
+			gameIsOver = true;
+		}
 	}
 
 }
 
 void Game::ComposeFrame()
 {
-	ball.Draw(gfx);
-	paddle.Draw(gfx);
+	if (!gameIsOver)
+	{
+		ball.Draw(gfx);
+		paddle.Draw(gfx);
+	}
 
 	for (const Brick& b : bricks)
 	{

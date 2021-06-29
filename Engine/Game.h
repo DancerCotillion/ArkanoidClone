@@ -63,5 +63,7 @@ private:
 	Paddle paddle; 
 	Sound WallBounce;
 	Sound BrickBounce; 
+
+	bool gameIsOver = false;
 	/********************************/
 };

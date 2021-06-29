@@ -6,11 +6,12 @@
 class Ball
 {
 public:
-	Ball(const Vec2& Pos_in, Vec2& Vel_in);
+	Ball(const Vec2& Pos_in, Vec2& Dir_in);
 	void update(float dt);
 	void Draw(Graphics& gfx);
 
-	bool doWallCollision(const Rectf& wall);
+	// return 0 = no collision, 1 = wall collision, 2 = hit the bottom (GAME OVER)
+	int doWallCollision(const Rectf& wall);
 
 	void ReboundX();
 	void ReboundY(); 
@@ -19,9 +20,12 @@ public:
 	Vec2 GetVelocity();
 	Vec2 GetPos();
 
+	void SetDirection(const Vec2& dir); 
+
 private:
 	Vec2 Pos;
 	Vec2 Vel;
+	float speed = 400.0f; 
 	static constexpr float radius = 7;
 };
 

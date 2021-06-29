@@ -40,14 +40,28 @@ bool Paddle::doBallCollision(Ball& ball)
 		{
 			const Vec2 ballPos = ball.GetPos();
 
-			if (std::signbit(ball.GetVelocity().x) == std::signbit((ballPos - pos).x))
+			if (std::signbit(ball.GetVelocity().x) == std::signbit((ballPos - pos).x)
+				|| (ballPos.x >= rect.left && ballPos.x <= rect.right))
 			{
-				ball.ReboundY();
-			}
-
-			else if (ballPos.x >= rect.left && ballPos.x <= rect.right)
-			{
-				ball.ReboundY();
+				Vec2 dir; 
+				const float xDifference = ballPos.x - pos.x;
+				const float fixedXComponent = fixedZoneHalfWidth * exitXFactor; 
+				if (std::abs(xDifference) < fixedZoneHalfWidth)
+				{
+					if (xDifference < 0.0f)
+					{
+						dir = Vec2(-fixedXComponent, -1.0f);
+					}
+					else
+					{
+						dir = Vec2(fixedXComponent, -1.0f);
+					}
+				}
+				else
+				{
+					dir = Vec2(xDifference * exitXFactor, -1.0f); 
+				}
+				ball.SetDirection(dir); 
 			}
 			else
 			{
