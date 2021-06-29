@@ -67,12 +67,36 @@ void Game::UpdateModel()
 		WallBounce.Play(); 
 	}
 
-	for(Brick& b : bricks)
+	bool collisionHappened = false;
+	float curColDistSq;
+	int curColIndex;
+
+	for(int i = 0; i < nBricks; ++i)
 	{
-		if (b.doCollision(ball))
+		if (bricks[i].CheckBallCollision(ball))
 		{
-			BrickBounce.Play();
+			const float newColDistSq = (ball.GetPos() - bricks[i].GetCentre()).GetLengthSq();
+			if (collisionHappened)
+			{
+				if (newColDistSq < curColDistSq)
+				{
+					curColDistSq = newColDistSq;
+					curColIndex = i; 
+				}
+			}
+			else
+			{
+				curColDistSq = newColDistSq;
+				curColIndex = i;
+				collisionHappened = true; 
+			}
 		}
+	}
+
+	if (collisionHappened)
+	{
+		bricks[curColIndex].doCollision(ball);
+		BrickBounce.Play(); 
 	}
 	if (ball.doWallCollision(walls))
 	{
