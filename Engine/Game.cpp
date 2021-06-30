@@ -25,13 +25,17 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	ball(Vec2(400.0f, 300.0f), Vec2(-1.0f, -1.0f)),
-	walls(0.0f, float(gfx.ScreenWidth), 0.0f, float(gfx.ScreenHeight)),
+	//ball(Graphics::GetScreenRect().GetCentre(), Vec2(-0.5f, 1.0f)),
+	walls(Rectf::FromCentre(Graphics::GetScreenRect().GetCentre(), fieldWidth / 2.0f, fieldHeight / 2.0f),
+		wallThickness, wallColor),
 	paddle( Vec2(400.0f, 500.0f), 50.0f, 15.0f),
+	lifeCounter({30.0f, 30.0f}, 3),
 	WallBounce (L"Sounds\\arkpad.wav"),
-	BrickBounce(L"Sounds\\arkbrick.wav")
+	BrickBounce(L"Sounds\\arkbrick.wav"),
+	PlayFart(L"Sounds\\fart.wav"),
+	Ready(L"Sounds\\Ready.wav")
 {
-	const Vec2 TopLeft(40.0f, 40.0f);
+	const Vec2 TopLeft(walls.getInnerBounds().left, walls.getInnerBounds().top + topSpace);
 	int i = 0;
 	for (int y = 0; y < nBricksRows; y++)
 	{
@@ -45,6 +49,7 @@ Game::Game(MainWindow& wnd)
 			i++;
 		}
 	}
+	ResetBall();
 }
 
 void Game::Go()
@@ -63,12 +68,12 @@ void Game::Go()
 
 void Game::UpdateModel(float dt)
 {
-	if (!gameIsOver)
+	if (gameState == 1)
 	{
-		ball.update(dt);
 		paddle.Update(wnd.kbd, dt);
+		paddle.doWallCollision(walls.getInnerBounds());
 
-		paddle.doWallCollision(walls);
+		ball.update(dt);		
 
 		if (paddle.doBallCollision(ball))
 		{
@@ -108,31 +113,90 @@ void Game::UpdateModel(float dt)
 			BrickBounce.Play();
 		}
 
-		int wallCollisionTest = ball.doWallCollision(walls); 
+		int wallCollisionTest = ball.doWallCollision(walls.getInnerBounds()); 
 
 		if (wallCollisionTest == 1)
 		{
-			paddle.ResetCoolDown();
+			if (!paddle.GetRect().isOverlapping(ball.GetRect()))
+			{
+				paddle.ResetCoolDown();
+			}		
 			WallBounce.Play();
 		}
 		else if (wallCollisionTest == 2)
 		{
-			gameIsOver = true;
+			StartRound();
+			ResetBall(); 
+			PlayFart.Play(); 
+		}
+	}
+	else if (gameState == 0)
+	{
+		if (wnd.kbd.KeyIsPressed(VK_RETURN))
+		{
+			StartRound(); 
+		}
+	}
+	else if (gameState == 3)
+	{
+		if ((curWaitTime += dt) > readyWaitTime)
+		{
+			gameState = 1; 
 		}
 	}
 
 }
 
-void Game::ComposeFrame()
+void Game::StartRound()
 {
-	if (!gameIsOver)
+	if (lifeCounter.ConsumeLive())
 	{
-		ball.Draw(gfx);
-		paddle.Draw(gfx);
+		curWaitTime = 0.0f;
+		Ready.Play();
+		gameState = 3;
+	}
+	else
+	{
+		gameState = 2; 
 	}
 
-	for (const Brick& b : bricks)
+}
+
+void Game::ResetBall()
+{
+	//TODO: change this so it is at the position of the paddle. 
+	ball = Ball(Graphics::GetScreenRect().GetCentre(), Vec2(-0.5f, 1.0f));
+}
+
+void Game::ComposeFrame()
+{
+	if (gameState == 1 || gameState == 3)
 	{
-		b.Draw(gfx); 
+		paddle.Draw(gfx);
+		lifeCounter.Draw(gfx); 
+	}
+	if (gameState == 3)
+	{
+		SpriteCodex::DrawReady(Graphics::GetScreenRect().GetCentre(), gfx);
+	}
+	if (gameState == 1)
+	{
+		ball.Draw(gfx);
+	}
+	if (gameState != 0)
+	{
+		for (const Brick& b : bricks)
+		{
+			b.Draw(gfx);
+		}
+		walls.Draw(gfx);
+	}
+	if (gameState == 0)
+	{
+		SpriteCodex::DrawTitle(Graphics::GetScreenRect().GetCentre(), gfx); 
+	}
+	else if (gameState == 2)
+	{
+		SpriteCodex::DrawGameOver(Graphics::GetScreenRect().GetCentre(), gfx);
 	}
 }

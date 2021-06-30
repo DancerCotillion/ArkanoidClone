@@ -29,6 +29,9 @@
 #include "Sound.h"
 #include "Brick.h"
 #include "Paddle.h"
+#include "Walls.h"
+#include "SpriteCodex.h"
+#include "Lives.h"
 
 class Game
 {
@@ -40,6 +43,8 @@ public:
 private:
 	void ComposeFrame();
 	void UpdateModel(float dt);
+	void StartRound(); 
+	void ResetBall(); 
 	/********************************/
 	/*  User Functions              */
 	/********************************/
@@ -49,22 +54,38 @@ private:
 	/********************************/
 	/*  User Variables              */
 	
+	
 	static constexpr float brickWidth = 40.0f;
-	static constexpr float brickHeight = 24.0f;
+	static constexpr float brickHeight = 22.0f;
+	static constexpr float topSpace = brickHeight * 1.6f;
 	static constexpr int nBricksRows = 4;
-	static constexpr int nBricksAcross = 18;
+	static constexpr int nBricksAcross = 12;
 	static constexpr int nBricks = nBricksRows * nBricksAcross;
 
 	static constexpr Color ColorArray[4] = { {230,0,0},{ 0,230,0 },{ 0,0,230 },{ 0,230,230 } };
 
 	Brick bricks[nBricks]; 
 
+	int gameState = 0; 
+	static constexpr float readyWaitTime = 4.3f;
+	float curWaitTime; 
+
 	FrameTimer ft; 
-	Rectf walls;
 	Ball ball; 
 	Paddle paddle; 
 	Sound WallBounce;
 	Sound BrickBounce; 
+	Sound PlayFart; 
+	Sound Ready;
+
+	Walls walls; 
+	
+	Lives lifeCounter; 
+
+	static constexpr float wallThickness = 12.0f;
+	static constexpr float fieldWidth = float(nBricksAcross) * brickWidth;
+	static constexpr float fieldHeight = float(Graphics::ScreenHeight) - wallThickness * 2.0f;
+	static constexpr Color wallColor = { 20,60,200 };
 
 	bool gameIsOver = false;
 	/********************************/

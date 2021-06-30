@@ -6,6 +6,7 @@
 class Ball
 {
 public:
+	Ball() = default;
 	Ball(const Vec2& Pos_in, Vec2& Dir_in);
 	void update(float dt);
 	void Draw(Graphics& gfx);

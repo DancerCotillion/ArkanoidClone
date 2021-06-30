@@ -17,5 +17,5 @@ const Rectf& Walls::getInnerBounds() const
 
 void Walls::Draw(Graphics& gfx) const
 {
-	bev.DrawBeveledFrame(innerBounds.GetExpanded(thickness), int(thickness), gfx); 
+	bev.DrawBeveledFrame(innerBounds.GetExpanded(thickness), int(thickness)/2, gfx); 
 }

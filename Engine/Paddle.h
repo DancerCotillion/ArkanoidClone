@@ -22,8 +22,8 @@ public:
 private:
 	static constexpr Color c = Colors::White;
 	static constexpr Color wingColor = Colors::Red;
-	static constexpr float wingWidth = 15;	
-	static constexpr float speed = 300.0f;
+	static constexpr float wingWidth = 6.0f;	
+	static constexpr float speed = 360.0f;
 
 	static constexpr float maximumExitRatio = 2.6f;
 	static constexpr float fixedZoneWidthRatio = 0.2f;
