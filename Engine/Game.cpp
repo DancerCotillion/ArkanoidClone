@@ -31,16 +31,17 @@ Game::Game(MainWindow& wnd)
 	WallBounce (L"Sounds\\arkpad.wav"),
 	BrickBounce(L"Sounds\\arkbrick.wav")
 {
-	const Color ColorArray[4] = {Colors::Red, Colors::Green, Colors::Cyan, Colors::White};
-
 	const Vec2 TopLeft(40.0f, 40.0f);
-
 	int i = 0;
 	for (int y = 0; y < nBricksRows; y++)
 	{
+		const Color c = ColorArray[y];
+
 		for (int x = 0; x < nBricksAcross; x++)
 		{
-			bricks[i] = Brick(Rectf(TopLeft+Vec2(x * brickWidth, y * brickHeight), brickWidth, brickHeight), ColorArray[y]);
+			bricks[i] = Brick(Rectf(
+				TopLeft + Vec2(x * brickWidth, y * brickHeight),
+				brickWidth, brickHeight), ColorArray[y]);
 			i++;
 		}
 	}

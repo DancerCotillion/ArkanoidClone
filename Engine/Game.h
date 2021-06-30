@@ -55,6 +55,8 @@ private:
 	static constexpr int nBricksAcross = 18;
 	static constexpr int nBricks = nBricksRows * nBricksAcross;
 
+	static constexpr Color ColorArray[4] = { {230,0,0},{ 0,230,0 },{ 0,0,230 },{ 0,230,230 } };
+
 	Brick bricks[nBricks]; 
 
 	FrameTimer ft; 

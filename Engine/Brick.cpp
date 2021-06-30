@@ -1,4 +1,3 @@
-#include "Ball.h"
 #include "Brick.h"
 #include <assert.h>
 #include <cmath>
@@ -6,7 +5,7 @@
 Brick::Brick(Rectf& rect_in, Color c_in)
 	:
 	Rect(rect_in),
-	c(c_in)
+	bev(c_in)
 {
 }
 
@@ -14,7 +13,8 @@ void Brick::Draw(Graphics& gfx) const
 {
 	if (!Destroyed)
 	{
-		gfx.DrawRect(Rect.GetExpanded(-padding), c);
+		//gfx.DrawRect(Rect.GetExpanded(-padding), c);
+		bev.DrawBeveledBrick(Rect.GetExpanded(-padding), bevelSize, gfx); 
 	}	
 }
 
